@@ -1,4 +1,5 @@
 'use strict'
+const mainContanier = document.querySelector(".main");
 const card =document.querySelector(".card-data");
 const btn=document.querySelector(".icon");
 
@@ -18,13 +19,39 @@ const renderAdvice= function(advice,id){
 card.insertAdjacentHTML("afterbegin",cardData);
 }
 
+const renderError = function(msg="something went wrong"){
+    mainContanier.innerHTML="";
+    const card = `
+    <article class="advice-card">
+       <p class="error-msg">
+       ${msg}
+       </p>
+    
+      
+    </article>`
+    mainContanier.insertAdjacentHTML("afterbegin",card);
+
+}
 
 
 const getAdvice = async function(){
-const response =await fetch("https://api.adviceslip.com/advice");
+    try{
+        const response =await fetch("https://api.adviceslip.com/advice");
+        console.log(response.ok)
+  if(!response.ok){
+    throw new Error("something went wrong");
+}
+    const data =await response.json();
+      renderAdvice(data.slip.advice, data.slip.id);
 
-const data =await response.json();
-renderAdvice(data.slip.advice, data.slip.id);
+    }catch(error){
+        
+renderError(error.message);
+
+
+
+    }
+
 
 }
 
